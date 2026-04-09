@@ -1,5 +1,5 @@
 import { Routes, Route, useParams, Navigate } from "react-router-dom";
-import Header from "./layout/header";
+import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import Register from "./pages/register";
 import Login from "./pages/login";
