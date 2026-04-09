@@ -1,0 +1,46 @@
+Materi 1 Fondasi: Pemahaman Perangkat & IP Logic
+- Pengenalan RouterOS & RouterBoard (Arsitektur, Fungsi, Pemilihan Perangkat)
+- Metode Akses Perangkat (Winbox, WebFig, CLI/SSH, MAC Telnet)
+- Manajemen Dasar OS (Reset Konfigurasi, Upgrade/Downgrade, Netinstall, Lisensi)
+- Pemahaman Dasar IP Address (IPv4, Subnetting, Prefix, Network & Broadcast)
+- Konsep Layer 2 vs Layer 3 (MAC Address vs IP Address)
+- Manajemen Interfaces pada Mikrotik (Ethernet, Bridge Dasar)
+
+Materi 2 Jalur Data : Routing Table & Gateway
+- Konsep Dasar Routing (Bagaimana router mengambil keputusan meneruskan paket)
+- Anatomi Routing Table di Mikrotik (Active, Connected, Static)
+- Konfigurasi Default Route (0.0.0.0/0) agar jaringan bisa ke Internet
+- Static Routing (Menghubungkan dua atau lebih jaringan LAN yang berbeda)
+- Routing Metric & Distance (Konsep Failover Dasar antar dua ISP)
+- Check Gateway Options (Ping)
+
+Materi 3 Jembatan Internet : Logika NAT (Network Address Translation)
+- Konsep Dasar NAT dan Perbedaan IP Publik vs IP Private
+- Chain srcnat (Source NAT) & Action Masquerade (Menghubungkan client LAN ke Internet)
+- Chain dstnat (Destination NAT) & Port Forwarding (Membuka akses lokal ke publik/Internet, misal: Web Server/CCTV)
+- Logika Connection Tracking di Mikrotik
+
+Materi 4 Router : Packet Flow Diagram
+- Pengenalan Packet Flow Mikrotik (Peta Perjalanan Paket dalam Router)
+- Chain Input vs Output (Trafik dari/menuju ke mesin Router itu sendiri)
+- Chain Forward (Trafik yang hanya numpang lewat Router dari PC A ke PC B)
+- Hubungan Prerouting & Postrouting dengan NAT dan Mangle
+- Memanfaatkan Packet Flow untuk menganalisa masalah jaringan yang kompleks
+
+Materi 5 Manajemen dan Keamanan
+- Manajemen Konfigurasi (Backup, Restore, Export, Import)
+- Layer Dasar Firewall Filter (Action: Accept, Drop, Reject)
+- Mengamankan Akses Router (Menutup port tidak terpakai, membatasi akses Admin dari IP khusus)
+- Manajemen Bandwidth Dasar (Membatasi kecepatan user menggunakan Simple Queue)
+- Layanan Jaringan Dasar (DHCP Server & Client, DNS Cache)
+- Manajemen Waktu (NTP Client)
+
+Materi 6 Troubleshooting Lab
+- Tool Diagnosa Jaringan Terpadu (Ping, Traceroute, Bandwidth Test)
+- Monitoring Trafik Riil (Torch, Interface Traffic Monitor)
+- Penggunaan System Logging untuk melacak error (Radius, DHCP, IPsec)
+- Troubleshooting Troubleshooting Skenario Umum:
+  1. Client tidak bisa browsing walau bisa ping 8.8.8.8
+  2. Gateway tidak bisa di-ping (Request Time Out)
+  3. Konfigurasi router benar namun CPU Usage 100% (DDoS & Profiling)
+  4. Lupa Password Admin (Prosedur Hard Reset)
