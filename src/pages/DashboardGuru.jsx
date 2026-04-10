@@ -67,10 +67,11 @@ const DashboardGuru = () => {
     const deleteStudent = async (id, name) => {
         if (!window.confirm(`Yakin ingin menghapus siswa "${name}"? Tindakan ini permanen dan akan menghapus seluruh data serta riwayat nilai siswa tersebut.`)) return;
 
-        const { error } = await supabase.from('profiles').delete().eq('id', id);
+        // Panggil RPC function di Supabase (SECURITY DEFINER) agar benar-benar terhapus dari database
+        const { error } = await supabase.rpc('delete_student', { student_id: id });
         if (!error) {
             setStudents(students.filter(s => s.id !== id));
-            alert('Siswa berhasil dihapus.');
+            alert('Siswa berhasil dihapus dari database.');
         } else {
             alert('Gagal menghapus siswa: ' + error.message);
         }

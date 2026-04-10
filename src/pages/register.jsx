@@ -60,7 +60,7 @@ const Register = () => {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-                        placeholder="Nama Siswa atau Guru"
+                        placeholder="Nama Siswa"
                     />
                 </div>
                 <div>
