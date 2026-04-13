@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 
 // =============================================
 // NavItem — Elemen navigasi individual (Desktop)
-// Mendukung dropdown untuk menu bertingkat
 // =============================================
 const NavItem = ({ title, to, items, icon: Icon }) => {
     return (
@@ -40,7 +39,6 @@ const NavItem = ({ title, to, items, icon: Icon }) => {
 
 // =============================================
 // MobileNavItem — Elemen navigasi individual (Mobile)
-// Dengan accordion untuk sub-menu
 // =============================================
 const MobileNavItem = ({ title, to, items, icon: Icon, onClose }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -88,31 +86,41 @@ const MobileNavItem = ({ title, to, items, icon: Icon, onClose }) => {
     );
 };
 
-
 const Header = () => {
     const { user, profile, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    
+    // State untuk mengontrol menu
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false); // State baru untuk profile dropdown
+    
+    // Referensi untuk deteksi klik di luar elemen
     const mobileMenuRef = useRef(null);
+    const profileMenuRef = useRef(null); 
 
-    // Tutup mobile menu saat pindah halaman
+    // Tutup menu saat pindah halaman
     useEffect(() => {
         setMobileMenuOpen(false);
+        setProfileOpen(false);
     }, [location.pathname]);
 
-    // Tutup mobile menu saat klik di luar
+    // Tutup menu saat klik di luar area
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+            // Tutup mobile menu
+            if (mobileMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && !event.target.closest('button[aria-label="Toggle navigation menu"]')) {
                 setMobileMenuOpen(false);
             }
+            // Tutup profile dropdown
+            if (profileOpen && profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+                setProfileOpen(false);
+            }
         };
-        if (mobileMenuOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
+
+        document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [mobileMenuOpen]);
+    }, [mobileMenuOpen, profileOpen]);
 
     const handleLogout = async () => {
         try {
@@ -124,7 +132,7 @@ const Header = () => {
     }
 
     // ======================================================
-    // MENU SISWA — Daftar materi pelajaran dengan dropdown
+    // MENU SISWA & GURU (Tetap sama seperti aslinya)
     // ======================================================
     const studentMenus = [
         {
@@ -196,22 +204,12 @@ const Header = () => {
         }
     ];
 
-    // ======================================================
-    // MENU GURU — Panel administrasi eksklusif guru
-    // Mengganti SELURUH navigasi materi dengan menu admin
-    // ======================================================
     const teacherMenus = [
-        // { title: "Halaman Materi", to: "/", items: [], icon: BookOpen },
         { title: "Kelola Siswa", to: "/dashboard-guru/siswa", items: [], icon: Users },
         { title: "Bank Ujian", to: "/dashboard-guru/ujian", items: [], icon: FileText },
         { title: "Buku Rekap Nilai", to: "/dashboard-guru/nilai", items: [], icon: GraduationCap }
     ];
 
-    // ======================================================
-    // LOGIKA UTAMA: Tentukan menu mana yang ditampilkan
-    // Guru -> teacherMenus (admin panel)
-    // Siswa / Belum login -> studentMenus (materi pelajaran)
-    // ======================================================
     const isGuru = profile?.role === 'guru';
     const activeMenus = user ? (isGuru ? teacherMenus : studentMenus) : [];
 
@@ -241,19 +239,33 @@ const Header = () => {
                     
                     {/* User Dropdown / Auth Buttons */}
                     {user ? (
-                        <div className="relative group cursor-pointer">
-                            <div className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg border border-gray-200 transition-colors">
+                        <div 
+                            className="relative group cursor-pointer" 
+                            ref={profileMenuRef}
+                        >
+                            {/* Tambahkan onClick disini */}
+                            <div 
+                                onClick={() => setProfileOpen(!profileOpen)}
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+                            >
                                 <User className="w-4 h-4 text-blue-600" />
                                 <span className="max-w-[120px] truncate hidden sm:inline">{profile?.full_name || 'User'}</span>
                             </div>
                             
-                            <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-50 p-2">
+                            {/* Kondisi CSS diubah agar merespons state profileOpen DAN group-hover */}
+                            <div className={`absolute top-full right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl transition-all duration-300 z-50 p-2 ${
+                                profileOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible group-hover:opacity-100 lg:group-hover:visible translate-y-2 lg:group-hover:translate-y-0'
+                            }`}>
                                 <div className="px-3 py-2 border-b border-gray-100 mb-1">
                                     <p className="text-xs text-gray-500">Masuk sebagai</p>
                                     <p className="text-sm font-bold text-gray-800 capitalize">{profile?.role || 'Siswa'}</p>
                                 </div>
                                 {isGuru && (
-                                    <Link to="/dashboard-guru/siswa" className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2.5 rounded-lg transition-colors w-full text-left">
+                                    <Link 
+                                        to="/dashboard-guru/siswa" 
+                                        onClick={() => setProfileOpen(false)}
+                                        className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2.5 rounded-lg transition-colors w-full text-left"
+                                    >
                                         <Users className="w-4 h-4" />
                                         Kelola Siswa
                                     </Link>
@@ -286,26 +298,20 @@ const Header = () => {
                 </div>
             </div>
 
-            {/* ================================================ */}
-            {/* Mobile Menu — Slide-down panel                    */}
-            {/* Menampilkan menu yang sama sesuai role aktif       */}
-            {/* ================================================ */}
+            {/* Mobile Menu */}
             {mobileMenuOpen && (
                 <div 
                     ref={mobileMenuRef}
-                    className="lg:hidden border-t border-gray-100 bg-white shadow-lg animate-slideDown"
+                    className="lg:hidden border-t border-gray-100 bg-white shadow-lg animate-slideDown absolute w-full left-0"
                     style={{ animation: 'slideDown 0.2s ease-out' }}
                 >
                     <div className="container mx-auto px-4 py-3 max-h-[70vh] overflow-y-auto">
-                        
-                        {/* Role Indicator (Mobile) */}
                         {user && (
                             <div className={`mb-3 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider ${isGuru ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'bg-blue-50 text-blue-700 border border-blue-100'}`}>
                                 {isGuru ? '🛡️ Mode Administrasi Guru' : '📚 Mode Belajar Siswa'}
                             </div>
                         )}
 
-                        {/* Menu Items */}
                         <div className="flex flex-col gap-0.5">
                             {activeMenus.map((menu, idx) => (
                                 <MobileNavItem 
@@ -319,7 +325,6 @@ const Header = () => {
                             ))}
                         </div>
 
-                        {/* Mobile-only Auth Links */}
                         {!user && (
                             <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2">
                                 <Link 
@@ -342,7 +347,6 @@ const Header = () => {
                 </div>
             )}
 
-            {/* CSS Animation for slide-down */}
             <style>{`
                 @keyframes slideDown {
                     from {
