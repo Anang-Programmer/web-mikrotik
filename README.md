@@ -4,7 +4,7 @@ Sebuah platform E-Learning interaktif berbasis web yang dikhususkan untuk mempel
 
 ---
 
-## 🎯 Fitur Utama
+## Fitur Utama
 
 ### 1. Modul Materi Terstruktur (6 Bab)
 Materi dibagi menjadi tahapan yang jelas untuk memudahkan pembelajaran:
